@@ -22,28 +22,18 @@
 
 
 export default {
-  name: 'Table',
+    name: 'Table',
+    props: {
+        headers: Array,
+        data: Array
+    },
   data () {
     return {
-        headers: [
-          {
-            text: 'Habitación',
-              align: 'left',
-            value: 'name'
-          },
-          { text: 'Luz', value: 'id' }
-        ],
-        data: [
-        { value: false, name: 'Sala', id: 0},
-        { value: false, name: 'Comedor', id: 1},
-        { value: false, name: 'Habitación principal', id:2},
-        { value: false, name: 'Habitación niños', id: 3}
-        ],
         selected: []
         
     }
-  }
- 
+}
+
 }
 </script>
 

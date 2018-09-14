@@ -31,6 +31,16 @@ class Lights (Resource):
         light_state = json_data['state']
         lights[light_id] = light_state
         return 200
+    def get (self):
+
+        resp = jsonify(lights)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
+class Doors (Resource):
+    def get (self):
+        resp = jsonify(doors)
+        resp.headers['Access-Control-Allow-Origin'] = '*'
+        return resp
 
 class Photo(Resource):
     def get(self):
@@ -39,6 +49,7 @@ class Photo(Resource):
 
 api.add_resource(Main, '/')
 api.add_resource(Lights, '/lights')
+api.add_resource(Doors, '/doors')
 api.add_resource(Photo, '/img')
 
 
