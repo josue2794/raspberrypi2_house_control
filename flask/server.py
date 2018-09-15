@@ -27,15 +27,17 @@ class Main(Resource):
 class Lights (Resource):
     def post (self):
         json_data = request.get_json()
+        resp.headers['Access-Control-Allow-Origin'] = '*'
         light_id = json_data['id']
         light_state = json_data['state']
         lights[light_id] = light_state
         return 200
-    def get (self):
 
+    def get (self):
         resp = jsonify(lights)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
+
 class Doors (Resource):
     def get (self):
         resp = jsonify(doors)
