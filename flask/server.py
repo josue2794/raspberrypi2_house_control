@@ -25,8 +25,8 @@ lights = {
 }
 
 doors = {
-    5 : 0,
-    6 : 0,
+    26 : 0,
+    13 : 0,
     12 : 0,
     16 : 0
 }
@@ -53,7 +53,6 @@ class Main(Resource):
 class Lights (Resource):
     def post (self):
         json_data = request.get_json()
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         light_id = json_data['id']
         light_state = json_data['state']
         lights[light_id] = light_state
@@ -73,8 +72,7 @@ class Doors (Resource):
 
 class Photo(Resource):
     def get(self):
-        if (num == 1):
-            return 'Aquí se envía la foto'
+        return 'Aquí se envía la foto'
 
 api.add_resource(Main, '/')
 api.add_resource(Lights, '/lights')
@@ -83,6 +81,6 @@ api.add_resource(Photo, '/img')
 
 
 if __name__ == '__main__':
-     enablePins()    
+     enablePins()
      app.run(host='0.0.0.0', port = 5555, debug=True)
      disablePins()
