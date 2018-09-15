@@ -45,9 +45,18 @@ def disablePins():
     for door in doors:
         pinMode(door,0)
 
+def readInputs():
+    for light in lights:
+        ledValue=digitalRead(light)
+        lights[light] = ledValue
+    for door in doors:
+        doorValue=digitalRead(door)
+        doors[door] = doorValue
+
 
 class Main(Resource):
     def get(self):
+        readInputs()
         return jsonify(lights, doors)
 
 class Lights (Resource):
@@ -84,3 +93,7 @@ if __name__ == '__main__':
      enablePins()
      app.run(host='0.0.0.0', port = 5555, debug=True)
      disablePins()
+<<<<<<< HEAD
+=======
+     print('free pins')
+>>>>>>> 6fd55aa5c1f930ffc7046cc48a26c8193dc0bd99
