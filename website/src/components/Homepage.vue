@@ -19,25 +19,25 @@ const luz_headers = [
         { text: 'Luz', value: 'id' }
         ]
 const luz_data = [
-        { value: false, name: 'Sala', id: 0},
-        { value: false, name: 'Comedor', id: 1},
-        { value: false, name: 'Habitación principal', id:2},
-        { value: false, name: 'Habitación niños', id: 3}
+        { value: false, name: 'Sala', id: 0, state:0},
+        { value: false, name: 'Comedor', id: 1, state:0},
+        { value: false, name: 'Habitación principal', id:2, state:0},
+        { value: false, name: 'Habitación niños', id: 3, state:0}
         ]
 
 const puerta_headers = [
     {
-        text: 'Puerta',
+        text: 'Puerta de Habitacion',
         align: 'left',
         value: 'name'
     },
-    { text: 'Puerta', value: 'id' }
+    { text: 'Estado', value: 'id' }
 ]
 const puerta_data = [
-    { value: false, name: 'Sala', id: 0},
-    { value: false, name: 'Comedor', id: 1},
-    { value: false, name: 'Habitación principal', id:2},
-    { value: false, name: 'Habitación niños', id: 3}
+    { value: false, name: 'Sala', id: 0, state:0},
+    { value: false, name: 'Comedor', id: 1, state:0},
+    { value: false, name: 'Habitación principal', id:2, state:0},
+    { value: false, name: 'Habitación niños', id: 3, state:0}
 ]
 
 
