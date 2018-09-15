@@ -1,24 +1,50 @@
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask import jsonify
+from ctypes import cdll
+
+gpio_lib = cdll.LoadLibrary("/home/taller7/lib/libGpioLib.so")
+initPin = gpio_lib.GPIOExport
+freePin = gpio_lib.GPIOUnexport
+pinMode = gpio_lib.pinMode
+blink = gpio_lib.blink
+digitalRead = gpio_lib.digitalRead
+digitalWrite = gpio_lib.digitalWrite
+picture = gpio_lib.picture
+
 
 app = Flask(__name__)
 api = Api(app)
 
 lights = {
-    0 : 0,
-    1 : 0,
-    2 : 0,
-    3 : 0,
-    4 : 0
+    4 : 0,
+    14 : 0,
+    15 : 0,
+    18 : 0,
+    17 : 0
 }
 
 doors = {
-    0 : 0,
-    1 : 0,
-    2 : 0,
-    3 : 0
+    5 : 0,
+    6 : 0,
+    12 : 0,
+    16 : 0
 }
+
+def enablePins():
+    for light in lights:
+        initPin(light)
+        pinMode(light,1)
+    for door in doors:
+        initPin(door)
+        pinMode(door,0)
+
+def disablePins():
+    for light in lights:
+        pinMode(light,1)
+    for door in doors:
+        pinMode(door,0)
+
 
 class Main(Resource):
     def get(self):
@@ -30,6 +56,7 @@ class Lights (Resource):
         light_id = json_data['id']
         light_state = json_data['state']
         lights[light_id] = light_state
+        digitalWrite(light_id,light_state)
         return 200
 
 class Photo(Resource):
@@ -43,4 +70,6 @@ api.add_resource(Photo, '/img')
 
 
 if __name__ == '__main__':
+     enablePins()    
      app.run(host='0.0.0.0', port = 5555, debug=True)
+     disablePins()
