@@ -3,21 +3,14 @@
 
   <v-data-table
           :headers="headers"
-          :items="data"
+          :items="items"
           item-key="name"
           class="elevation-1"
   >
     <template slot="items" slot-scope="props">
 
       <td>{{ props.item.name }}</td>
-      <v-alert
-              :value="true"
-              color="error"
-              icon="warning"
-              outline
-      >
-        This is a error alert.
-      </v-alert>
+        <td>{{props.item.state}}</td>
 
     </template>
   </v-data-table>
@@ -36,18 +29,26 @@ export default {
     },
   data () {
     return {
-        data: []
+        data_from_api: [],
+        items: this.data
         
     }
 
   },
   created() {
-      axios.get(`http://localhost:5555/lights`)
+      axios.get(`http://localhost:5555/doors`)
           .then(response => {
-              this.data = response.data
+              this.data_from_api = response.data
+              let i;
+              for (i = 0; i < this.items.length; i++) {
+                  if(this.data_from_api.hasOwnProperty(this.items[i].id))
+                  {
+                      this.items[i]['state'] = this.data_from_api[this.items[i].id];
+                  }
+              }
           })
           .catch(e => {
-              this.errors.push(e)
+              console.log(e)
           })
   }
 
