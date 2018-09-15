@@ -25,8 +25,8 @@ lights = {
 }
 
 doors = {
-    5 : 0,
-    6 : 0,
+    26 : 0,
+    13 : 0,
     12 : 0,
     16 : 0
 }
@@ -45,15 +45,23 @@ def disablePins():
     for door in doors:
         pinMode(door,0)
 
+def readInputs():
+    for light in lights:
+        ledValue=digitalRead(light)
+        lights[light] = ledValue
+    for door in doors:
+        doorValue=digitalRead(door)
+        doors[door] = doorValue
+
 
 class Main(Resource):
     def get(self):
+        readInputs()
         return jsonify(lights, doors)
 
 class Lights (Resource):
     def post (self):
         json_data = request.get_json()
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         light_id = json_data['id']
         light_state = json_data['state']
         lights[light_id] = light_state
@@ -86,3 +94,4 @@ if __name__ == '__main__':
      enablePins()    
      app.run(host='0.0.0.0', port = 5555, debug=True)
      disablePins()
+     print('free pins')
