@@ -93,7 +93,4 @@ if __name__ == '__main__':
      enablePins()
      app.run(host='0.0.0.0', port = 5555, debug=True)
      disablePins()
-<<<<<<< HEAD
-=======
      print('free pins')
->>>>>>> 6fd55aa5c1f930ffc7046cc48a26c8193dc0bd99
