@@ -1,7 +1,19 @@
+#!/usr/bin/env python3
 from flask import Flask, request, Response
 from flask_restful import Resource, Api
 from flask import jsonify
 from flask import send_file
+from ctypes import cdll
+
+gpio_lib = cdll.LoadLibrary("/home/taller7/lib/libGpioLib.so")
+initPin = gpio_lib.GPIOExport
+freePin = gpio_lib.GPIOUnexport
+pinMode = gpio_lib.pinMode
+blink = gpio_lib.blink
+digitalRead = gpio_lib.digitalRead
+digitalWrite = gpio_lib.digitalWrite
+picture = gpio_lib.picture
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -18,17 +30,46 @@ lights = [
     
 
 doors = [
-    {'id' : 36, 'value' : False,  'name': 'Principal'},
+    {'id' : 26, 'value' : False,  'name': 'Principal'},
     {'id' : 13, 'value' : True,  'name': 'Patio'},
     {'id' : 12, 'value' : False,  'name': 'Sala'},
     {'id' : 16, 'value' : True,  'name': 'Comedor'},
 ]
+
+def enablePins():
+    for light in lights:
+        initPin(light['id'])
+        pinMode(light['id'],1)
+    for door in doors:
+        initPin(door['id'])
+        pinMode(door['id'],0)
+
+def disablePins():
+    for light in lights:
+        freePin(light['id'])
+    for door in doors:
+        freePin(door['id'])
+        
+def setValue(array,id,value):
+    for ele in array:
+                if (ele['id'] == id):
+                    ele['value'] = value
+    return array                
+
+def readInputs():
+    for light in lights:
+        ledValue=digitalRead(light['id'])
+        light['value']=ledValue
+    for door in doors:
+        doorValue=digitalRead(door['id'])
+        door['value']=doorValue
 
 class Main(Resource):
     def get(self):
         if(request.headers.get('password') != password):
             resp = jsonify([])
         else:
+            readInputs()
             resp = jsonify({'lights': lights, 'doors': doors})
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
@@ -46,6 +87,7 @@ class Lights (Resource):
             for light in lights:
                 if (light['id'] == light_id):
                     light['value'] = light_value
+                    digitalWrite(light_id,light_value)
             resp.headers['Access-Control-Allow-Origin'] = '*'
         
         return resp
@@ -61,6 +103,7 @@ class Lights (Resource):
         if (request.headers.get('password') != password):
             resp = jsonify([])
         else:
+            readInputs()
             resp = jsonify( lights)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
@@ -70,6 +113,7 @@ class Doors (Resource):
         if(request.headers.get('password') != password):
             resp = jsonify([])
         else:
+            readInputs()
             resp = jsonify(doors)
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
@@ -118,4 +162,7 @@ api.add_resource(Photo, '/img')
 
 
 if __name__ == '__main__':
-     app.run(host='0.0.0.0', port = 5555, debug=True)
+     enablePins()
+     readInputs()    
+     app.run(host='0.0.0.0', port = 5555)
+     disablePins()
