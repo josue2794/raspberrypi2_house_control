@@ -13,6 +13,10 @@ import {
     VDataTable,
     VSwitch,
     VAlert,
+    VImg,
+    VCard,
+
+    VSubheader,
   transitions
 } from 'vuetify'
 import 'vuetify/src/stylus/app.styl'
@@ -31,6 +35,9 @@ VTextField,
       VDataTable,
       VSwitch,
 VAlert,
+      VImg,
+      VCard,
+      VSubheader,
     transitions
   },
 })

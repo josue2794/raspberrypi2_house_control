@@ -1,7 +1,7 @@
 from flask import Flask, request, Response
 from flask_restful import Resource, Api
 from flask import jsonify
-
+from flask import send_file
 
 app = Flask(__name__)
 api = Api(app)
@@ -83,7 +83,7 @@ class Doors (Resource):
 
 class Photo(Resource):
     def get(self):
-        return 'Aquí se envía la foto'
+        return send_file('test.gif', mimetype='image/gif')
     def options (self):
         resp = Response("")
         resp.headers['Access-Control-Allow-Origin'] = '*'
