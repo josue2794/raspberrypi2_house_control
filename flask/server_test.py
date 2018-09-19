@@ -127,7 +127,8 @@ class Doors (Resource):
 
 class Photo(Resource):
     def get(self):
-        return send_file('test.gif', mimetype='image/gif')
+        picture()
+        return send_file('image.jpg', mimetype='image/gif')
     def options (self):
         resp = Response("")
         resp.headers['Access-Control-Allow-Origin'] = '*'
