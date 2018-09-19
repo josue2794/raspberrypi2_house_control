@@ -1,63 +1,98 @@
 <template>
-  <div class="Homepage">
-      <Table :headers="luz_headers" :data="luz_data" />
-      <TableInfo :headers="puerta_headers" :data="puerta_data"/>
-  </div>
+    <div justify-center>
+        <v-toolbar color="red">
+            <v-toolbar-title>Domotica</v-toolbar-title>
+            <v-spacer></v-spacer>
+                <v-text-field v-if="!authenticated" v-model="password" type="password"
+                              label="Password"
+                ></v-text-field>
+
+                <v-btn v-if="!authenticated" @click="login" flat>Login</v-btn>
+            <td v-if="error">Error Authenticating</td>
+            <v-toolbar-title v-if="authenticated">Hello Admin</v-toolbar-title>
+        </v-toolbar>
+        <v-subheader  v-if="authenticated">Lights</v-subheader>
+        <Table v-if="authenticated" :headers="luz_headers" :endpoint="luz_endpoint" :password="password"/>
+        <v-divider></v-divider>
+        <v-subheader  v-if="authenticated"> Doors</v-subheader>
+        <TableInfo v-if="authenticated" :headers="puerta_headers" :endpoint="puerta_endpoint" :password="password"/>
+        <v-divider></v-divider>
+        <v-spacer></v-spacer>
+        <v-subheader  v-if="authenticated"> Camera Picture</v-subheader>
+        <v-card primary-title><v-img  v-if="authenticated" src="http://localhost:5555/img" class="grey darken-4"></v-img></v-card>
+    </div>
 </template>
 
 
 <script>
-import Table from './Table.vue'
-import TableInfo from "./TableInfo";
+    import Table from './Table.vue'
+    import TableInfo from "./TableInfo";
+    import axios from 'axios';
 
-const luz_headers = [
+    const luz_headers = [
         {
             text: 'Habitación',
             align: 'left',
             value: 'name'
         },
-        { text: 'Luz', value: 'id' }
-        ]
-const luz_data = [
-        { value: false, name: 'Sala', id: 0, state:0},
-        { value: false, name: 'Comedor', id: 1, state:0},
-        { value: false, name: 'Habitación principal', id:2, state:0},
-        { value: false, name: 'Habitación niños', id: 3, state:0}
-        ]
+        {text: 'Luz', value: 'id'}
+    ]
+    const endpoint = 'http://localhost:5555';
+    const luz_endpoint = endpoint + '/lights';
+    const puerta_endpoint = endpoint + '/doors';
+    const puerta_headers = [
+        {
+            text: 'Puerta de Habitacion',
+            align: 'left',
+            value: 'name'
+        },
+        {text: 'Estado', value: 'id'}
+    ]
 
-const puerta_headers = [
-    {
-        text: 'Puerta de Habitacion',
-        align: 'left',
-        value: 'name'
-    },
-    { text: 'Estado', value: 'id' }
-]
-const puerta_data = [
-    { value: false, name: 'Sala', id: 0, state:0},
-    { value: false, name: 'Comedor', id: 1, state:0},
-    { value: false, name: 'Habitación principal', id:2, state:0},
-    { value: false, name: 'Habitación niños', id: 3, state:0}
-]
+    export default {
+        name: 'Homepage',
+        components: {
+            TableInfo,
+            Table
+        },
+        methods: {
+            login() {
+                axios.post(endpoint + '/auth', {}, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'password': this.password
+                    }
+                })
+                    .then(response => {
+                        let status = response.status;
+                        if (status == 200) {
+                            this.authenticated = true
+                            this.error = false
+                        }
+                        else
+                            this.error = true
+                    })
+                    .catch(e => {
+                        this.error = true
+                    })
 
+            }
 
-export default {
-  name: 'Homepage',
-  components: {
-      TableInfo,
-    Table
-  },
-    data () {
-        return {
-            luz_data: luz_data,
-            luz_headers: luz_headers,
-            puerta_data: puerta_data,
-            puerta_headers: puerta_headers
+        },
+        data() {
+            return {
+                luz_headers: luz_headers,
+                puerta_headers: puerta_headers,
+                luz_endpoint: luz_endpoint,
+                puerta_endpoint: puerta_endpoint,
+                password: "",
+                authenticated: false,
+                error: false
+            }
 
         }
 
-        }
-}
+    }
 </script>
 
 <style scoped>

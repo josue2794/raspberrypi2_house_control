@@ -10,7 +10,7 @@
     <template slot="items" slot-scope="props">
 
       <td>{{ props.item.name }}</td>
-        <td>{{props.item.state}}</td>
+      <td @click="update_data()">{{props.item.value ? "Abierta" : "Cerrada"}}</td>
 
     </template>
   </v-data-table>
@@ -25,31 +25,35 @@ export default {
     name: 'TableInfo',
     props: {
         headers: Array,
-        data: Array
+        endpoint: String,
+        password: String
     },
+    methods:
+        {
+            update_data()
+            {
+                axios.get(this.endpoint, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'password': this.password
+                    }})
+                    .then(response => {
+                        this.items = response.data;
+                    })
+                    .catch(e => {
+                        console.log(e)
+                    })
+            }
+        },
   data () {
     return {
-        data_from_api: [],
-        items: this.data
+        items: []
         
     }
 
   },
   created() {
-      axios.get(`http://localhost:5555/doors`)
-          .then(response => {
-              this.data_from_api = response.data
-              let i;
-              for (i = 0; i < this.items.length; i++) {
-                  if(this.data_from_api.hasOwnProperty(this.items[i].id))
-                  {
-                      this.items[i]['state'] = this.data_from_api[this.items[i].id];
-                  }
-              }
-          })
-          .catch(e => {
-              console.log(e)
-          })
+      this.update_data()
   }
 
 }
