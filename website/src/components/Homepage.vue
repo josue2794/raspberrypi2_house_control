@@ -13,13 +13,11 @@
         </v-toolbar>
         <v-subheader  v-if="authenticated">Lights</v-subheader>
         <Table v-if="authenticated" :headers="luz_headers" :endpoint="luz_endpoint" :password="password"/>
-        <v-divider></v-divider>
         <v-subheader  v-if="authenticated"> Doors</v-subheader>
         <TableInfo v-if="authenticated" :headers="puerta_headers" :endpoint="puerta_endpoint" :password="password"/>
-        <v-divider></v-divider>
         <v-spacer></v-spacer>
         <v-subheader  v-if="authenticated"> Camera Picture</v-subheader>
-        <v-card primary-title><v-img  v-if="authenticated" src="http://localhost:5555/img" class="grey darken-4"></v-img></v-card>
+        <v-card @click="update_img()" primary-title><v-img  v-if="authenticated" :src="img_endpoint" class="grey darken-4"></v-img></v-card>
     </div>
 </template>
 
@@ -37,9 +35,10 @@
         },
         {text: 'Luz', value: 'id'}
     ]
-    const endpoint = 'http://localhost:5555';
+    const endpoint = 'http://192.168.100.17:5555';
     const luz_endpoint = endpoint + '/lights';
     const puerta_endpoint = endpoint + '/doors';
+    const img_endpoint = endpoint + '/img';
     const puerta_headers = [
         {
             text: 'Puerta de Habitacion',
@@ -76,7 +75,12 @@
                         this.error = true
                     })
 
-            }
+            },
+            update_img() {
+                if(this.authenticated) {
+                    this.img_endpoint = endpoint + "/img?" + new Date().getTime()
+                }
+            },
 
         },
         data() {
@@ -85,11 +89,17 @@
                 puerta_headers: puerta_headers,
                 luz_endpoint: luz_endpoint,
                 puerta_endpoint: puerta_endpoint,
+                img_endpoint: img_endpoint,
                 password: "",
                 authenticated: false,
-                error: false
+                error: false,
+                img_show: false
             }
 
+        },
+        created() {
+            this.update_img()
+            setInterval(this.update_img, 7000)
         }
 
     }

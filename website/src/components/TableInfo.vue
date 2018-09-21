@@ -54,6 +54,7 @@ export default {
   },
   created() {
       this.update_data()
+      setInterval(this.update_data, 1200)
   }
 
 }
